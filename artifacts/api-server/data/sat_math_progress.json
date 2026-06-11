@@ -1,0 +1,44 @@
+[
+  {
+    "id": "2ebd2caf-0583-4000-bc1f-8d75cf9e6a86",
+    "timestamp": "2026-06-11T19:30:46.952Z",
+    "questionId": "math-002",
+    "topic": "Quadratic Equations",
+    "userAnswer": "B",
+    "correct": "B",
+    "isCorrect": true,
+    "subject": "math",
+    "snapshot": {
+      "question": "Which of the following is a solution to $x^2 - 5x + 6 = 0$?",
+      "passage": null,
+      "options": [
+        "1",
+        "2",
+        "4",
+        "5"
+      ],
+      "explanation": "Factor: $(x-2)(x-3) = 0$. So $x = 2$ or $x = 3$. Answer is $x = 2$."
+    }
+  },
+  {
+    "id": "1fc7d3d3-5f7a-4a86-ba79-b797af62bff0",
+    "timestamp": "2026-06-11T19:30:56.319Z",
+    "questionId": "math-007",
+    "topic": "Statistics",
+    "userAnswer": "B",
+    "correct": "B",
+    "isCorrect": true,
+    "subject": "math",
+    "snapshot": {
+      "question": "The mean of the data set $\\{4, 7, 9, 10, 15\\}$ is:",
+      "passage": null,
+      "options": [
+        "8",
+        "9",
+        "10",
+        "11"
+      ],
+      "explanation": "Mean $= \\dfrac{4 + 7 + 9 + 10 + 15}{5} = \\dfrac{45}{5} = 9$."
+    }
+  }
+]

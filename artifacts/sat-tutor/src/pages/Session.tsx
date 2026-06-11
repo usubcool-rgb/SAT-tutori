@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation } from "wouter";
-import { ArrowLeft, ChevronRight, CheckCircle, XCircle, Loader2, BookOpen, Calculator } from "lucide-react";
+import { ArrowLeft, ChevronRight, CheckCircle, XCircle, Loader2, BookOpen, Calculator, Clock } from "lucide-react";
 import {
   useGetQuestions,
   getGetQuestionsQueryKey,
@@ -17,6 +17,8 @@ interface Config {
   difficulty: "Easy" | "Medium" | "Hard";
   questionCount: number;
   targetDate: string;
+  timedMode: boolean;
+  timePerQuestion: number;
 }
 
 function loadConfig(): Config {
@@ -26,10 +28,12 @@ function loadConfig(): Config {
       difficulty: "Medium",
       questionCount: 10,
       targetDate: "2026-08-01",
+      timedMode: false,
+      timePerQuestion: 90,
       ...JSON.parse(localStorage.getItem("sat_config") ?? "{}"),
     };
   } catch {
-    return { subject: "math", difficulty: "Medium", questionCount: 10, targetDate: "2026-08-01" };
+    return { subject: "math", difficulty: "Medium", questionCount: 10, targetDate: "2026-08-01", timedMode: false, timePerQuestion: 90 };
   }
 }
 
@@ -50,6 +54,57 @@ function addMasteredId(id: string) {
 
 const LETTERS = ["A", "B", "C", "D"];
 
+// Circular countdown timer component
+function TimerRing({ timeLeft, total }: { timeLeft: number; total: number }) {
+  const radius = 22;
+  const circumference = 2 * Math.PI * radius;
+  const ratio = timeLeft / total;
+  const offset = circumference * (1 - ratio);
+
+  const color =
+    ratio > 0.5 ? "#22c55e" :   // green
+    ratio > 0.25 ? "#f59e0b" :  // amber
+    "#ef4444";                   // red
+
+  const formatTime = (s: number) => {
+    const m = Math.floor(s / 60);
+    const sec = s % 60;
+    return m > 0 ? `${m}:${String(sec).padStart(2, "0")}` : `${s}`;
+  };
+
+  return (
+    <div className="relative w-14 h-14 shrink-0">
+      <svg className="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
+        <circle
+          cx="28" cy="28" r={radius}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="3"
+          className="text-muted/30"
+        />
+        <circle
+          cx="28" cy="28" r={radius}
+          fill="none"
+          stroke={color}
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
+          style={{ transition: "stroke-dashoffset 1s linear, stroke 0.5s ease" }}
+        />
+      </svg>
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span
+          className="text-xs font-bold tabular-nums"
+          style={{ color }}
+        >
+          {formatTime(timeLeft)}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 export default function Session() {
   const [, setLocation] = useLocation();
   const config = loadConfig();
@@ -59,9 +114,12 @@ export default function Session() {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
   const [submitted, setSubmitted] = useState(false);
-  const [sessionResults, setSessionResults] = useState<Array<{ correct: boolean; topic: string }>>([]);
+  const [timedOut, setTimedOut] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(config.timePerQuestion);
+  const [sessionResults, setSessionResults] = useState<Array<{ correct: boolean; topic: string; timedOut: boolean }>>([]);
   const [sessionDone, setSessionDone] = useState(false);
   const [explanation, setExplanation] = useState<string | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const masteredIds = loadMasteredIds().join(",");
   const params = {
@@ -96,61 +154,116 @@ export default function Session() {
     [isMath]
   );
 
-  const handleSubmit = async () => {
-    if (selectedIdx === null || !currentQ) return;
-    setSubmitted(true);
+  // Submit handler — accepts optional forced wrong for timeout
+  const submitAnswer = useCallback(
+    async (forcedWrong = false) => {
+      if (!currentQ) return;
 
-    const userLetter = LETTERS[selectedIdx];
-    const correctLetter = currentQ.correct.toUpperCase();
-    const isCorrect = userLetter === correctLetter;
+      // Stop timer
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
 
-    if (isCorrect) addMasteredId(currentQ.id);
+      const userLetter = forcedWrong || selectedIdx === null ? null : LETTERS[selectedIdx];
+      const correctLetter = currentQ.correct.toUpperCase();
+      const isCorrect = userLetter === correctLetter;
 
-    const snapshot: ProgressInput["snapshot"] = {
-      question: currentQ.question,
-      passage: currentQ.passage ?? null,
-      options: currentQ.options,
-      explanation: currentQ.explanation ?? null,
-    };
+      if (isCorrect) addMasteredId(currentQ.id);
 
-    const progressData: ProgressInput = {
-      questionId: currentQ.id,
-      topic: currentQ.topic ?? "Unknown",
-      userAnswer: userLetter,
-      correct: correctLetter,
-      isCorrect,
-      subject: config.subject,
-      snapshot,
-    };
+      const snapshot: ProgressInput["snapshot"] = {
+        question: currentQ.question,
+        passage: currentQ.passage ?? null,
+        options: currentQ.options,
+        explanation: currentQ.explanation ?? null,
+      };
 
-    saveProgress.mutate({ data: progressData }, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: getGetProgressQueryKey({ subject: config.subject }) });
-      },
-    });
+      const progressData: ProgressInput = {
+        questionId: currentQ.id,
+        topic: currentQ.topic ?? "Unknown",
+        userAnswer: userLetter ?? "—",
+        correct: correctLetter,
+        isCorrect,
+        subject: config.subject,
+        snapshot,
+      };
 
-    setSessionResults((prev) => [...prev, { correct: isCorrect, topic: currentQ.topic ?? "Unknown" }]);
-
-    // Get AI explanation
-    explainMutation.mutate(
-      {
-        data: {
-          question: currentQ.question,
-          passage: currentQ.passage ?? null,
-          options: currentQ.options,
-          correct: correctLetter,
-          userAnswer: userLetter,
-          subject: config.subject,
+      saveProgress.mutate({ data: progressData }, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProgressQueryKey({ subject: config.subject }) });
         },
-      },
-      { onSuccess: (data) => setExplanation(data.text) }
-    );
+      });
+
+      setSessionResults((prev) => [...prev, { correct: isCorrect, topic: currentQ.topic ?? "Unknown", timedOut: forcedWrong }]);
+      setSubmitted(true);
+
+      // Get AI explanation
+      explainMutation.mutate(
+        {
+          data: {
+            question: currentQ.question,
+            passage: currentQ.passage ?? null,
+            options: currentQ.options,
+            correct: correctLetter,
+            userAnswer: userLetter ?? "none",
+            subject: config.subject,
+          },
+        },
+        { onSuccess: (data) => setExplanation(data.text) }
+      );
+    },
+    [currentQ, selectedIdx, config.subject, saveProgress, queryClient, explainMutation]
+  );
+
+  // Countdown effect
+  useEffect(() => {
+    if (!config.timedMode || submitted || questions.length === 0 || !currentQ) return;
+
+    setTimeLeft(config.timePerQuestion);
+
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timerRef.current!);
+          timerRef.current = null;
+          setTimedOut(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentIdx, questions.length, config.timedMode]);
+
+  // Auto-submit when timed out
+  useEffect(() => {
+    if (timedOut && !submitted) {
+      submitAnswer(true);
+    }
+  }, [timedOut, submitted, submitAnswer]);
+
+  const handleSubmit = () => {
+    if (selectedIdx === null || submitted) return;
+    setTimedOut(false);
+    submitAnswer(false);
   };
 
   const handleNext = () => {
     setSelectedIdx(null);
     setSubmitted(false);
+    setTimedOut(false);
     setExplanation(null);
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
+    }
     if (currentIdx + 1 >= questions.length) {
       setSessionDone(true);
     } else {
@@ -175,6 +288,7 @@ export default function Session() {
   if (sessionDone || (questions.length > 0 && currentIdx >= questions.length)) {
     const total = sessionResults.length;
     const correct = sessionResults.filter((r) => r.correct).length;
+    const timedOutCount = sessionResults.filter((r) => r.timedOut).length;
     const pct = total > 0 ? Math.round((correct / total) * 100) : 0;
     return (
       <div className="min-h-screen bg-background flex flex-col">
@@ -204,6 +318,12 @@ export default function Session() {
                 <p className="text-xs text-muted-foreground">Score</p>
               </div>
             </div>
+            {config.timedMode && timedOutCount > 0 && (
+              <div className="flex items-center gap-2 text-sm text-amber-600 bg-amber-50 dark:bg-amber-950/30 rounded-lg px-3 py-2">
+                <Clock className="w-4 h-4 shrink-0" />
+                <span>{timedOutCount} question{timedOutCount > 1 ? "s" : ""} timed out</span>
+              </div>
+            )}
             {/* Per-topic breakdown */}
             {sessionResults.length > 0 && (
               <div className="text-left space-y-2 max-h-40 overflow-y-auto">
@@ -260,15 +380,22 @@ export default function Session() {
       <div className="h-1 bg-muted">
         <div
           className="h-full bg-primary transition-all duration-300"
-          style={{ width: `${((currentIdx) / questions.length) * 100}%` }}
+          style={{ width: `${(currentIdx / questions.length) * 100}%` }}
         />
       </div>
 
       <main className="flex-1 max-w-3xl mx-auto w-full px-6 py-6 space-y-6">
-        {/* Progress indicator */}
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <span>Question <span className="font-semibold text-foreground">{currentIdx + 1}</span> of {questions.length}</span>
-          <span className="font-medium text-foreground capitalize">{currentQ?.topic ?? ""}</span>
+        {/* Progress indicator + optional timer */}
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Question <span className="font-semibold text-foreground">{currentIdx + 1}</span> of {questions.length}
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="text-sm font-medium text-foreground capitalize">{currentQ?.topic ?? ""}</span>
+            {config.timedMode && !submitted && (
+              <TimerRing timeLeft={timeLeft} total={config.timePerQuestion} />
+            )}
+          </div>
         </div>
 
         {/* Passage */}
@@ -348,21 +475,33 @@ export default function Session() {
         ) : (
           <div className="space-y-4">
             {/* Result banner */}
-            <div className={`flex items-center gap-3 p-4 rounded-xl ${userLetter === correctLetter ? "bg-green-50 border border-green-200 dark:bg-green-950/30 dark:border-green-800" : "bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-800"}`}>
-              {userLetter === correctLetter ? (
-                <CheckCircle className="w-5 h-5 text-green-600 shrink-0" />
-              ) : (
-                <XCircle className="w-5 h-5 text-destructive shrink-0" />
-              )}
-              <div>
-                <p className="font-semibold text-sm">
-                  {userLetter === correctLetter ? "Correct!" : `Incorrect — the answer is ${correctLetter}`}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  You chose {userLetter}, correct answer is {correctLetter}
-                </p>
+            {timedOut ? (
+              <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200 dark:bg-amber-950/30 dark:border-amber-800">
+                <Clock className="w-5 h-5 text-amber-600 shrink-0" />
+                <div>
+                  <p className="font-semibold text-sm text-amber-700 dark:text-amber-400">Time's up!</p>
+                  <p className="text-xs text-amber-600/80">
+                    No answer submitted — the correct answer is <span className="font-bold">{correctLetter}</span>
+                  </p>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className={`flex items-center gap-3 p-4 rounded-xl ${userLetter === correctLetter ? "bg-green-50 border border-green-200 dark:bg-green-950/30 dark:border-green-800" : "bg-red-50 border border-red-200 dark:bg-red-950/30 dark:border-red-800"}`}>
+                {userLetter === correctLetter ? (
+                  <CheckCircle className="w-5 h-5 text-green-600 shrink-0" />
+                ) : (
+                  <XCircle className="w-5 h-5 text-destructive shrink-0" />
+                )}
+                <div>
+                  <p className="font-semibold text-sm">
+                    {userLetter === correctLetter ? "Correct!" : `Incorrect — the answer is ${correctLetter}`}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    You chose {userLetter}, correct answer is {correctLetter}
+                  </p>
+                </div>
+              </div>
+            )}
 
             {/* AI Explanation */}
             <div className="bg-card border border-card-border rounded-xl p-4 explanation-enter">
@@ -414,6 +553,12 @@ function SessionHeader({ config, onBack }: { config: Config; onBack: () => void 
           {config.subject === "english" ? "English R&W" : "Math"} · {config.difficulty}
         </span>
       </div>
+      {config.timedMode && (
+        <div className="ml-auto flex items-center gap-1.5 text-xs font-medium text-accent bg-accent/10 px-2.5 py-1 rounded-full">
+          <Clock className="w-3 h-3" />
+          Timed
+        </div>
+      )}
     </header>
   );
 }

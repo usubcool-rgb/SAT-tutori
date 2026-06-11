@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { BookOpen, Calculator, Target, TrendingUp, Clock, ChevronRight, AlertCircle, Trophy } from "lucide-react";
+import { BookOpen, Calculator, Target, TrendingUp, Clock, ChevronRight, AlertCircle, Trophy, Timer } from "lucide-react";
 import { useGetDbStatus, useGetStats, useGetProgress } from "@workspace/api-client-react";
 
 interface Config {
@@ -8,6 +8,8 @@ interface Config {
   difficulty: "Easy" | "Medium" | "Hard";
   questionCount: number;
   targetDate: string;
+  timedMode: boolean;
+  timePerQuestion: number;
 }
 
 const DEFAULT_CONFIG: Config = {
@@ -15,6 +17,8 @@ const DEFAULT_CONFIG: Config = {
   difficulty: "Medium",
   questionCount: 10,
   targetDate: "2026-08-01",
+  timedMode: false,
+  timePerQuestion: 90,
 };
 
 function loadConfig(): Config {
@@ -62,6 +66,12 @@ export default function Home() {
   const startSession = () => {
     saveConfig(config);
     setLocation("/session");
+  };
+
+  const formatTime = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return m > 0 ? `${m}m ${s}s` : `${s}s`;
   };
 
   return (
@@ -204,6 +214,55 @@ export default function Home() {
               </div>
             </div>
 
+            {/* Timed mode */}
+            <div className={`rounded-xl border-2 p-4 transition-all ${config.timedMode ? "border-accent bg-accent/5" : "border-border bg-card"}`}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-colors ${config.timedMode ? "bg-accent text-accent-foreground" : "bg-muted text-muted-foreground"}`}>
+                    <Timer className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Timed mode</p>
+                    <p className="text-xs text-muted-foreground">Countdown per question</p>
+                  </div>
+                </div>
+                <button
+                  data-testid="timed-mode-toggle"
+                  onClick={() => setConfig((c) => ({ ...c, timedMode: !c.timedMode }))}
+                  className={`relative w-11 h-6 rounded-full transition-colors ${config.timedMode ? "bg-accent" : "bg-muted"}`}
+                >
+                  <span
+                    className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${config.timedMode ? "translate-x-5" : "translate-x-0"}`}
+                  />
+                </button>
+              </div>
+
+              {config.timedMode && (
+                <div className="mt-4 pt-4 border-t border-border space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-medium text-foreground">Time per question</label>
+                    <span className="text-sm font-semibold text-accent tabular-nums">{formatTime(config.timePerQuestion)}</span>
+                  </div>
+                  <input
+                    data-testid="time-per-question-slider"
+                    type="range"
+                    min={15}
+                    max={180}
+                    step={15}
+                    value={config.timePerQuestion}
+                    onChange={(e) => setConfig((c) => ({ ...c, timePerQuestion: Number(e.target.value) }))}
+                    className="w-full accent-accent"
+                  />
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>15s</span><span>3m</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Auto-submits when time runs out. Questions answered late count as incorrect.
+                  </p>
+                </div>
+              )}
+            </div>
+
             {/* Target date */}
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">Exam date</label>
@@ -238,7 +297,6 @@ export default function Home() {
               </div>
             ) : (
               <div className="space-y-3">
-                {/* Per-subject accuracy */}
                 {[
                   { label: "Math", subject: "math", stats: mathStats, progress: mathProgress },
                   { label: "English R&W", subject: "english", stats: engStats, progress: engProgress },
