@@ -3,20 +3,27 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: SAT Tutor API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: questions
+    description: SAT questions
+  - name: progress
+    description: Progress tracking
+  - name: explain
+    description: AI explanations
+  - name: stats
+    description: Topic stats
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +31,158 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /questions:
+    get:
+      operationId: getQuestions
+      tags: [questions]
+      summary: Get a set of questions
+      parameters:
+        - name: subject
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [english, math]
+        - name: difficulty
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [Easy, Medium, Hard]
+        - name: count
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+        - name: masteredIds
+          in: query
+          required: false
+          schema:
+            type: string
+            description: Comma-separated list of mastered question IDs to exclude
+      responses:
+        "200":
+          description: List of questions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Question"
+
+  /explain:
+    post:
+      operationId: getExplanation
+      tags: [explain]
+      summary: Get AI explanation for a question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExplanationInput"
+      responses:
+        "200":
+          description: AI explanation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Explanation"
+
+  /progress:
+    get:
+      operationId: getProgress
+      tags: [progress]
+      summary: Get progress log for a subject
+      parameters:
+        - name: subject
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [english, math]
+      responses:
+        "200":
+          description: Progress entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProgressEntry"
+    post:
+      operationId: saveProgress
+      tags: [progress]
+      summary: Save a progress entry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProgressInput"
+      responses:
+        "201":
+          description: Saved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProgressEntry"
+    delete:
+      operationId: resetProgress
+      tags: [progress]
+      summary: Reset all progress for a subject
+      parameters:
+        - name: subject
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [english, math]
+      responses:
+        "200":
+          description: Reset
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [stats]
+      summary: Get topic stats for a subject
+      parameters:
+        - name: subject
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [english, math]
+      responses:
+        "200":
+          description: Topic stats
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TopicStat"
+
+  /db-status:
+    get:
+      operationId: getDbStatus
+      tags: [questions]
+      summary: Check if question database is loaded
+      responses:
+        "200":
+          description: DB status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DbStatus"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +193,137 @@ components:
       required:
         - status
 
+    Question:
+      type: object
+      required: [id, subject, question, options, correct]
+      properties:
+        id:
+          type: string
+        subject:
+          type: string
+        topic:
+          type: ["string", "null"]
+        difficulty:
+          type: ["string", "null"]
+        passage:
+          type: ["string", "null"]
+        question:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        correct:
+          type: string
+        explanation:
+          type: ["string", "null"]
+
+    ExplanationInput:
+      type: object
+      required: [question, options, correct, userAnswer]
+      properties:
+        question:
+          type: string
+        passage:
+          type: ["string", "null"]
+        options:
+          type: array
+          items:
+            type: string
+        correct:
+          type: string
+        userAnswer:
+          type: string
+        subject:
+          type: string
+
+    Explanation:
+      type: object
+      required: [text]
+      properties:
+        text:
+          type: string
+
+    ProgressEntry:
+      type: object
+      required: [id, timestamp, questionId, topic, userAnswer, correct, isCorrect, subject]
+      properties:
+        id:
+          type: string
+        timestamp:
+          type: string
+        questionId:
+          type: string
+        topic:
+          type: string
+        userAnswer:
+          type: string
+        correct:
+          type: string
+        isCorrect:
+          type: boolean
+        subject:
+          type: string
+        snapshot:
+          $ref: "#/components/schemas/QuestionSnapshot"
+
+    QuestionSnapshot:
+      type: object
+      properties:
+        question:
+          type: string
+        passage:
+          type: ["string", "null"]
+        options:
+          type: array
+          items:
+            type: string
+        explanation:
+          type: ["string", "null"]
+
+    ProgressInput:
+      type: object
+      required: [questionId, topic, userAnswer, correct, isCorrect, subject]
+      properties:
+        questionId:
+          type: string
+        topic:
+          type: string
+        userAnswer:
+          type: string
+        correct:
+          type: string
+        isCorrect:
+          type: boolean
+        subject:
+          type: string
+        snapshot:
+          $ref: "#/components/schemas/QuestionSnapshot"
+
+    TopicStat:
+      type: object
+      required: [topic, correct, incorrect, total, accuracy]
+      properties:
+        topic:
+          type: string
+        correct:
+          type: integer
+        incorrect:
+          type: integer
+        total:
+          type: integer
+        accuracy:
+          type: number
+
+    DbStatus:
+      type: object
+      required: [loaded, englishCount, mathCount]
+      properties:
+        loaded:
+          type: boolean
+        englishCount:
+          type: integer
+        mathCount:
+          type: integer
+        message:
+          type: ["string", "null"]

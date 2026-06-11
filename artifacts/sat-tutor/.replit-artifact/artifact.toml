@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "SAT Tutor"
+version = "1.0.0"
+id = "artifacts/sat-tutor"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19208
+
+[services.development]
+run = "pnpm --filter @workspace/sat-tutor run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/sat-tutor", "run", "build" ]
+publicDir = "artifacts/sat-tutor/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19208"
+BASE_PATH = "/"
