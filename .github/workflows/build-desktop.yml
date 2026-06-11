@@ -1,0 +1,63 @@
+name: Build Desktop App
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            package_cmd: package:win
+            artifact_name: windows-installer
+            artifact_glob: "artifacts/sat-tutor-desktop/release/*.exe"
+          - os: macos-latest
+            package_cmd: package:mac
+            artifact_name: mac-installer
+            artifact_glob: "artifacts/sat-tutor-desktop/release/*.dmg"
+          - os: ubuntu-latest
+            package_cmd: package:linux
+            artifact_name: linux-installer
+            artifact_glob: "artifacts/sat-tutor-desktop/release/*.AppImage"
+
+    runs-on: ${{ matrix.os }}
+    name: Build (${{ matrix.os }})
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install --ignore-scripts
+        working-directory: .
+
+      - name: Build app bundles
+        run: node build.mjs
+        working-directory: artifacts/sat-tutor-desktop
+
+      - name: Package installer
+        run: pnpm run ${{ matrix.package_cmd }}
+        working-directory: artifacts/sat-tutor-desktop
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_glob }}
+          retention-days: 30
