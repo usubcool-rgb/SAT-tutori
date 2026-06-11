@@ -1,0 +1,28 @@
+{
+  "name": "@workspace/sat-tutor-desktop",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "electron .",
+    "package:win": "electron-builder --win",
+    "package:mac": "electron-builder --mac",
+    "package:linux": "electron-builder --linux",
+    "package:all": "electron-builder --win --mac --linux",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "catalog:",
+    "@types/node": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "electron": "^34.3.3",
+    "electron-builder": "^25.1.8",
+    "esbuild": "0.27.3",
+    "esbuild-plugin-pino": "^2.3.3",
+    "tailwindcss": "catalog:",
+    "thread-stream": "3.1.0",
+    "typescript": "~5.9.3",
+    "vite": "catalog:"
+  }
+}

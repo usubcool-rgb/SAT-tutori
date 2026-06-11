@@ -2,15 +2,9 @@ import { Router } from "express";
 import path from "path";
 import fs from "fs";
 import { GetQuestionsQueryParams } from "@workspace/api-zod";
+import { resolveDataDir } from "../lib/data-dir";
 
 const router = Router();
-
-const workspaceRoot = process.cwd().endsWith(path.join("artifacts", "api-server"))
-  ? path.resolve(process.cwd(), "../..")
-  : process.cwd();
-
-const dataDir = path.resolve(workspaceRoot, "artifacts/api-server/data");
-const dbFilePath = path.join(dataDir, "sat_database.json");
 
 interface Question {
   id?: string;
@@ -24,8 +18,13 @@ interface Question {
   explanation?: string;
 }
 
+function getDbFilePath() {
+  return path.join(resolveDataDir(), "sat_database.json");
+}
+
 function loadDatabase(): Question[] {
   try {
+    const dbFilePath = getDbFilePath();
     if (!fs.existsSync(dbFilePath)) return [];
     const raw = fs.readFileSync(dbFilePath, "utf-8");
     return JSON.parse(raw) as Question[];
@@ -53,22 +52,19 @@ router.get("/questions", (req, res) => {
 
   if (difficulty) {
     const byDifficulty = candidates.filter(
-      (q) =>
-        q.difficulty?.toLowerCase() === difficulty.toLowerCase()
+      (q) => q.difficulty?.toLowerCase() === difficulty.toLowerCase()
     );
     if (byDifficulty.length >= count) {
       candidates = byDifficulty;
     }
   }
 
-  // Prefer non-mastered
   let available = candidates.filter((q) => !masteredSet.has(q.id ?? ""));
   if (available.length < count) {
     const mastered = candidates.filter((q) => masteredSet.has(q.id ?? ""));
     available = [...available, ...mastered];
   }
 
-  // Shuffle and take count
   const shuffled = available.sort(() => Math.random() - 0.5);
   const selected = shuffled.slice(0, count);
 
@@ -91,7 +87,7 @@ router.get("/db-status", (_req, res) => {
     mathCount,
     message: loaded
       ? null
-      : `Database not found. Place sat_database.json in: ${dataDir}`,
+      : `Database not found. Place sat_database.json in: ${resolveDataDir()}`,
   });
 });
 

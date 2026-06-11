@@ -3,17 +3,16 @@ import path from "path";
 import fs from "fs";
 import { randomUUID } from "crypto";
 import { GetProgressQueryParams, SaveProgressBody, ResetProgressQueryParams } from "@workspace/api-zod";
+import { resolveDataDir } from "../lib/data-dir";
 
 const router = Router();
 
-const workspaceRoot = process.cwd().endsWith(path.join("artifacts", "api-server"))
-  ? path.resolve(process.cwd(), "../..")
-  : process.cwd();
-
-const dataDir = path.resolve(workspaceRoot, "artifacts/api-server/data");
+function getDataDir() {
+  return resolveDataDir();
+}
 
 function getProgressFile(subject: string): string {
-  return path.join(dataDir, `sat_${subject}_progress.json`);
+  return path.join(getDataDir(), `sat_${subject}_progress.json`);
 }
 
 function loadProgress(subject: string): unknown[] {
@@ -27,7 +26,8 @@ function loadProgress(subject: string): unknown[] {
 }
 
 function saveProgressFile(subject: string, data: unknown[]): void {
-  fs.mkdirSync(dataDir, { recursive: true });
+  const dir = getDataDir();
+  fs.mkdirSync(dir, { recursive: true });
   fs.writeFileSync(getProgressFile(subject), JSON.stringify(data, null, 2));
 }
 
@@ -48,16 +48,10 @@ router.post("/progress", (req, res) => {
     return;
   }
 
-  const entry = {
-    id: randomUUID(),
-    timestamp: new Date().toISOString(),
-    ...parseResult.data,
-  };
-
-  const progress = loadProgress(parseResult.data.subject);
-  progress.push(entry);
-  saveProgressFile(parseResult.data.subject, progress);
-
+  const entry = { ...parseResult.data, id: randomUUID(), timestamp: new Date().toISOString() };
+  const existing = loadProgress(entry.subject) as unknown[];
+  existing.push(entry);
+  saveProgressFile(entry.subject, existing);
   res.status(201).json(entry);
 });
 
@@ -68,7 +62,7 @@ router.delete("/progress", (req, res) => {
     return;
   }
   saveProgressFile(parseResult.data.subject, []);
-  res.json({ status: "ok" });
+  res.json({ ok: true });
 });
 
 export default router;

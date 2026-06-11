@@ -2,14 +2,9 @@ import { Router } from "express";
 import path from "path";
 import fs from "fs";
 import { GetStatsQueryParams } from "@workspace/api-zod";
+import { resolveDataDir } from "../lib/data-dir";
 
 const router = Router();
-
-const workspaceRoot = process.cwd().endsWith(path.join("artifacts", "api-server"))
-  ? path.resolve(process.cwd(), "../..")
-  : process.cwd();
-
-const dataDir = path.resolve(workspaceRoot, "artifacts/api-server/data");
 
 interface ProgressEntry {
   topic?: string;
@@ -18,7 +13,7 @@ interface ProgressEntry {
 
 function loadProgress(subject: string): ProgressEntry[] {
   try {
-    const filePath = path.join(dataDir, `sat_${subject}_progress.json`);
+    const filePath = path.join(resolveDataDir(), `sat_${subject}_progress.json`);
     if (!fs.existsSync(filePath)) return [];
     return JSON.parse(fs.readFileSync(filePath, "utf-8")) as ProgressEntry[];
   } catch {

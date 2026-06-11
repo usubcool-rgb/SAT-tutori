@@ -63,6 +63,38 @@ A mastery-based SAT practice app with LaTeX math rendering, AI-powered explanati
 
 _Populate as you build — explicit user instructions worth remembering across sessions._
 
+## Desktop App (Electron)
+
+The `artifacts/sat-tutor-desktop/` package wraps the web app as a native desktop installer for Windows, Mac, and Linux.
+
+### Build the app
+
+```bash
+cd artifacts/sat-tutor-desktop
+node build.mjs          # builds main process, preload, server bundle, and React renderer
+```
+
+### Create an installer
+
+Run one of these from `artifacts/sat-tutor-desktop/`:
+
+```bash
+pnpm run package:win    # Windows  → release/*.exe (NSIS installer)
+pnpm run package:mac    # macOS    → release/*.dmg
+pnpm run package:linux  # Linux    → release/*.AppImage
+pnpm run package:all    # all three platforms
+```
+
+> **Important:** Building for Mac requires a macOS machine (for code signing). Windows/Linux builds can be done on any platform. Download the generated installer from `artifacts/sat-tutor-desktop/release/`.
+
+### Architecture
+
+- Electron main process (`dist/main.js`) finds a free port and forks a child Node.js process
+- The forked process (`dist/electron-server.mjs`) runs a combined Express server: API at `/api/*` + serves the React renderer as static files
+- Data is stored in the OS user data directory (e.g. `%APPDATA%/SAT Tutor/sat-data/` on Windows)
+- The default `sat_database.json` is copied to the user data directory on first launch
+- GROQ_API_KEY can be set as a system environment variable; without it, AI explanations show a fallback
+
 ## Gotchas
 
 - Place your own `sat_database.json` in `artifacts/api-server/data/` to replace the sample questions. Format: array of `{ id, subject, topic, difficulty, passage?, question, options: string[], correct, explanation? }`.
