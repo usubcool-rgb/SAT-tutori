@@ -7,24 +7,8 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        include:
-          - os: windows-latest
-            package_cmd: package:win
-            artifact_name: windows-installer
-            artifact_glob: "artifacts/sat-tutor-desktop/release/*.exe"
-          - os: macos-latest
-            package_cmd: package:mac
-            artifact_name: mac-installer
-            artifact_glob: "artifacts/sat-tutor-desktop/release/*.dmg"
-          - os: ubuntu-latest
-            package_cmd: package:linux
-            artifact_name: linux-installer
-            artifact_glob: "artifacts/sat-tutor-desktop/release/*.AppImage"
-
-    runs-on: ${{ matrix.os }}
-    name: Build (${{ matrix.os }})
+    runs-on: windows-latest
+    name: Build (Windows)
 
     steps:
       - name: Checkout
@@ -49,15 +33,14 @@ jobs:
         working-directory: artifacts/sat-tutor-desktop
 
       - name: Package installer
-        run: pnpm run ${{ matrix.package_cmd }}
+        run: pnpm run package:win
         working-directory: artifacts/sat-tutor-desktop
         env:
-          CSC_IDENTITY_AUTO_DISCOVERY: false
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload installer
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact_name }}
-          path: ${{ matrix.artifact_glob }}
+          name: windows-installer
+          path: artifacts/sat-tutor-desktop/release/*.exe
           retention-days: 30
