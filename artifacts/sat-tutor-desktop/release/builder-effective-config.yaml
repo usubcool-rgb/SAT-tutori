@@ -1,0 +1,50 @@
+directories:
+  output: release
+  buildResources: build-resources
+appId: com.sattutor.desktop
+productName: SAT Tutor
+copyright: Copyright © 2026
+files:
+  - filter:
+      - dist/main.js
+      - dist/preload.js
+      - package.json
+extraResources:
+  - from: dist/electron-server.mjs
+    to: electron-server.mjs
+  - from: dist/electron-server.mjs.map
+    to: electron-server.mjs.map
+    filter:
+      - '**/*'
+  - from: dist/renderer
+    to: renderer
+  - from: ../../artifacts/api-server/data/sat_database.json
+    to: data/sat_database.json
+win:
+  icon: build-resources/icon.ico
+  target:
+    - target: nsis
+      arch:
+        - x64
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+mac:
+  icon: build-resources/icon.icns
+  category: public.app-category.education
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+linux:
+  icon: build-resources/icon.png
+  category: Education
+  target:
+    - target: AppImage
+      arch:
+        - x64
+electronVersion: 34.5.8

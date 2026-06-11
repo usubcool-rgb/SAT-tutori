@@ -1,0 +1,203 @@
+[
+  {
+    "id": "math-001",
+    "subject": "math",
+    "topic": "Algebra",
+    "difficulty": "Medium",
+    "passage": null,
+    "question": "If $2x + 5 = 17$, what is the value of $x$?",
+    "options": ["3", "6", "7", "11"],
+    "correct": "B",
+    "explanation": "Subtract 5 from both sides: $2x = 12$. Divide both sides by 2: $x = 6$."
+  },
+  {
+    "id": "math-002",
+    "subject": "math",
+    "topic": "Quadratic Equations",
+    "difficulty": "Medium",
+    "passage": null,
+    "question": "Which of the following is a solution to $x^2 - 5x + 6 = 0$?",
+    "options": ["1", "2", "4", "5"],
+    "correct": "B",
+    "explanation": "Factor: $(x-2)(x-3) = 0$. So $x = 2$ or $x = 3$. Answer is $x = 2$."
+  },
+  {
+    "id": "math-003",
+    "subject": "math",
+    "topic": "Functions",
+    "difficulty": "Hard",
+    "passage": null,
+    "question": "If $f(x) = 3x^2 - 2x + 1$, what is $f(-2)$?",
+    "options": ["9", "13", "17", "21"],
+    "correct": "C",
+    "explanation": "$f(-2) = 3(-2)^2 - 2(-2) + 1 = 3(4) + 4 + 1 = 12 + 4 + 1 = 17$."
+  },
+  {
+    "id": "math-004",
+    "subject": "math",
+    "topic": "Linear Equations",
+    "difficulty": "Easy",
+    "passage": null,
+    "question": "What is the slope of the line passing through $(2, 3)$ and $(6, 11)$?",
+    "options": ["1", "2", "3", "4"],
+    "correct": "B",
+    "explanation": "Slope $= \\dfrac{11 - 3}{6 - 2} = \\dfrac{8}{4} = 2$."
+  },
+  {
+    "id": "math-005",
+    "subject": "math",
+    "topic": "Geometry",
+    "difficulty": "Medium",
+    "passage": null,
+    "question": "A circle has a radius of 5. What is its area? (Use $\\pi \\approx 3.14$)",
+    "options": ["15.7", "31.4", "78.5", "157"],
+    "correct": "C",
+    "explanation": "Area $= \\pi r^2 = 3.14 \\times 5^2 = 3.14 \\times 25 = 78.5$."
+  },
+  {
+    "id": "math-006",
+    "subject": "math",
+    "topic": "Inequalities",
+    "difficulty": "Easy",
+    "passage": null,
+    "question": "Which value of $x$ satisfies $3x - 4 > 8$?",
+    "options": ["2", "3", "4", "5"],
+    "correct": "D",
+    "explanation": "Add 4: $3x > 12$. Divide by 3: $x > 4$. Only $x = 5$ satisfies this."
+  },
+  {
+    "id": "math-007",
+    "subject": "math",
+    "topic": "Statistics",
+    "difficulty": "Medium",
+    "passage": null,
+    "question": "The mean of the data set $\\{4, 7, 9, 10, 15\\}$ is:",
+    "options": ["8", "9", "10", "11"],
+    "correct": "B",
+    "explanation": "Mean $= \\dfrac{4 + 7 + 9 + 10 + 15}{5} = \\dfrac{45}{5} = 9$."
+  },
+  {
+    "id": "math-008",
+    "subject": "math",
+    "topic": "Exponential Functions",
+    "difficulty": "Hard",
+    "passage": null,
+    "question": "Which expression is equivalent to $\\left(x^3\\right)^4$?",
+    "options": ["$x^7$", "$x^{12}$", "$4x^3$", "$x^{34}$"],
+    "correct": "B",
+    "explanation": "When raising a power to a power, multiply the exponents: $(x^3)^4 = x^{3 \\cdot 4} = x^{12}$."
+  },
+  {
+    "id": "math-009",
+    "subject": "math",
+    "topic": "Systems of Equations",
+    "difficulty": "Hard",
+    "passage": null,
+    "question": "If $x + y = 10$ and $x - y = 4$, what is $x$?",
+    "options": ["3", "5", "7", "8"],
+    "correct": "C",
+    "explanation": "Add the two equations: $2x = 14$, so $x = 7$."
+  },
+  {
+    "id": "math-010",
+    "subject": "math",
+    "topic": "Trigonometry",
+    "difficulty": "Hard",
+    "passage": null,
+    "question": "In a right triangle, if $\\sin(\\theta) = \\dfrac{3}{5}$, what is $\\cos(\\theta)$?",
+    "options": ["$\\dfrac{3}{4}$", "$\\dfrac{4}{5}$", "$\\dfrac{5}{3}$", "$\\dfrac{5}{4}$"],
+    "correct": "B",
+    "explanation": "Using the Pythagorean identity: $\\cos^2(\\theta) = 1 - \\sin^2(\\theta) = 1 - \\dfrac{9}{25} = \\dfrac{16}{25}$, so $\\cos(\\theta) = \\dfrac{4}{5}$."
+  },
+  {
+    "id": "eng-001",
+    "subject": "english",
+    "topic": "Main Idea",
+    "difficulty": "Medium",
+    "passage": "The ocean covers more than 70 percent of Earth's surface and contains about 97 percent of Earth's water. Despite its vastness, the ocean remains largely unexplored. Scientists estimate that more than 80 percent of the ocean has never been mapped, explored, or even seen by humans. The deep sea, in particular, hosts a wide variety of unusual creatures that have adapted to survive under extreme pressure, cold temperatures, and complete darkness.",
+    "question": "What is the main idea of this passage?",
+    "options": [
+      "The ocean is too dangerous for humans to explore.",
+      "The ocean is vast and still largely unexplored.",
+      "Deep sea creatures are dangerous and unusual.",
+      "Earth's water is mostly found in the ocean."
+    ],
+    "correct": "B",
+    "explanation": "The passage emphasizes that the ocean is enormous (covering 70% of Earth's surface) and that most of it has never been explored."
+  },
+  {
+    "id": "eng-002",
+    "subject": "english",
+    "topic": "Vocabulary in Context",
+    "difficulty": "Easy",
+    "passage": "The scientist's meticulous attention to detail was evident in her research. Every measurement was recorded precisely, every variable carefully controlled.",
+    "question": "As used in the passage, the word \"meticulous\" most nearly means:",
+    "options": ["careless", "quick", "extremely careful", "creative"],
+    "correct": "C",
+    "explanation": "\"Meticulous\" means showing great attention to detail, which matches \"extremely careful.\" The context confirms this — she recorded everything precisely and controlled every variable."
+  },
+  {
+    "id": "eng-003",
+    "subject": "english",
+    "topic": "Grammar",
+    "difficulty": "Easy",
+    "passage": null,
+    "question": "Which sentence uses a comma correctly?",
+    "options": [
+      "She went to the store, and bought milk.",
+      "Because it was raining, we stayed inside.",
+      "He likes soccer, tennis and basketball.",
+      "I finished my homework, but, I forgot to bring it."
+    ],
+    "correct": "B",
+    "explanation": "A comma is correctly used after an introductory adverbial clause (\"Because it was raining\"). The other options contain comma splices or misplaced commas."
+  },
+  {
+    "id": "eng-004",
+    "subject": "english",
+    "topic": "Evidence-Based Reading",
+    "difficulty": "Medium",
+    "passage": "Renewable energy sources, such as solar and wind power, have seen significant growth over the past decade. However, critics argue that these energy sources are unreliable because they depend on weather conditions. Proponents counter that advances in battery storage technology are making renewable energy increasingly dependable.",
+    "question": "According to the passage, what concern do critics raise about renewable energy?",
+    "options": [
+      "It is too expensive to produce.",
+      "It relies on unpredictable weather.",
+      "Battery storage is not advanced enough.",
+      "It has not grown fast enough."
+    ],
+    "correct": "B",
+    "explanation": "The passage states critics argue that renewable sources \"are unreliable because they depend on weather conditions.\""
+  },
+  {
+    "id": "eng-005",
+    "subject": "english",
+    "topic": "Rhetorical Purpose",
+    "difficulty": "Hard",
+    "passage": "While many celebrate technological progress, philosopher Albert Borgmann cautions that modern devices can create a culture of passive consumption. He warns that convenience comes at the cost of meaningful engagement with the world.",
+    "question": "The author includes Borgmann's perspective primarily to:",
+    "options": [
+      "Argue that technology is harmful.",
+      "Introduce a counterpoint to uncritical enthusiasm for technology.",
+      "Prove that convenience is more important than engagement.",
+      "Explain why people use modern devices."
+    ],
+    "correct": "B",
+    "explanation": "Borgmann's view is presented as a cautionary perspective, offering a counterpoint to those who celebrate technology without reservation."
+  },
+  {
+    "id": "eng-006",
+    "subject": "english",
+    "topic": "Sentence Structure",
+    "difficulty": "Medium",
+    "passage": null,
+    "question": "Which of the following is a complete sentence?",
+    "options": [
+      "Running through the park every morning.",
+      "Although the weather was cold.",
+      "She discovered a new species of bird.",
+      "The tall, ancient tree near the river."
+    ],
+    "correct": "C",
+    "explanation": "\"She discovered a new species of bird\" contains both a subject (she) and a predicate (discovered a new species of bird), making it a complete sentence."
+  }
+]
