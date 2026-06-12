@@ -1,0 +1,46 @@
+Scope: all 10 workspace projects
+Lockfile is up to date, resolution step is skipped
+Progress: resolved 1, reused 0, downloaded 0, added 0
+Packages: +751
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Progress: resolved 751, reused 0, downloaded 62, added 8
+Progress: resolved 751, reused 0, downloaded 135, added 38
+Progress: resolved 751, reused 0, downloaded 271, added 110
+Progress: resolved 751, reused 0, downloaded 302, added 122
+Progress: resolved 751, reused 0, downloaded 310, added 126
+Progress: resolved 751, reused 0, downloaded 340, added 138
+Progress: resolved 751, reused 0, downloaded 414, added 165
+Progress: resolved 751, reused 0, downloaded 549, added 223
+Progress: resolved 751, reused 0, downloaded 634, added 256
+Progress: resolved 751, reused 0, downloaded 698, added 292
+Progress: resolved 751, reused 0, downloaded 750, added 329
+Progress: resolved 751, reused 0, downloaded 750, added 361
+Progress: resolved 751, reused 0, downloaded 751, added 691
+Progress: resolved 751, reused 0, downloaded 751, added 751, done
+.../esbuild@0.27.3/node_modules/esbuild postinstall$ node install.js
+.../esbuild@0.27.3/node_modules/esbuild postinstall: [esbuild] Failed to find package "@esbuild/win32-x64" on the file system
+.../esbuild@0.27.3/node_modules/esbuild postinstall: This can happen if you use the "--no-optional" flag. The "optionalDependencies"
+.../esbuild@0.27.3/node_modules/esbuild postinstall: package.json feature is used by esbuild to install the correct binary executable
+.../esbuild@0.27.3/node_modules/esbuild postinstall: for your current platform. This install script will now attempt to work around
+.../esbuild@0.27.3/node_modules/esbuild postinstall: this. If that fails, you need to remove the "--no-optional" flag to use esbuild.
+.../esbuild@0.27.3/node_modules/esbuild postinstall: [esbuild] Trying to install package "@esbuild/win32-x64" using npm
+.../esbuild@0.27.3/node_modules/esbuild postinstall: Done
+
+devDependencies:
++ prettier 3.8.3
++ typescript 5.9.3
+
+. preinstall$ node scripts/preinstall.js
+. preinstall: file:///D:/a/SAT-tutori/SAT-tutori/scripts/preinstall.js:2
+. preinstall: const fs = require("fs");
+. preinstall:            ^
+. preinstall: ReferenceError: require is not defined in ES module scope, you can use import instead
+. preinstall: This file is being treated as an ES module because it has a '.js' file extension and 'D:\a\SAT-tutori\SAT-tutori\scripts\package.json' contains "type": "module". To treat it as a CommonJS script, rename it to use the '.cjs' file extension.
+. preinstall:     at file:///D:/a/SAT-tutori/SAT-tutori/scripts/preinstall.js:2:12
+. preinstall:     at ModuleJob.run (node:internal/modules/esm/module_job:325:25)
+. preinstall:     at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)
+. preinstall:     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)
+. preinstall: Node.js v20.20.2
+. preinstall: Failed
+ ELIFECYCLE  Command failed with exit code 1.
+Error: Process completed with exit code 1.
