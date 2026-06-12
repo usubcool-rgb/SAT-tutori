@@ -1,0 +1,32 @@
+> @workspace/sat-tutor-desktop@1.0.0 package:win D:\a\SAT-tutori\SAT-tutori\artifacts\sat-tutor-desktop
+> electron-builder --win
+  • electron-builder  version=25.1.8 os=10.0.26100
+  • artifacts will be published if draft release exists  reason=CI detected
+  • loaded configuration  file=D:\a\SAT-tutori\SAT-tutori\artifacts\sat-tutor-desktop\electron-builder.yml
+  • description is missed in the package.json  appPackageFile=D:\a\SAT-tutori\SAT-tutori\artifacts\sat-tutor-desktop\package.json
+  • author is missed in the package.json  appPackageFile=D:\a\SAT-tutori\SAT-tutori\artifacts\sat-tutor-desktop\package.json
+  • executing @electron/rebuild  electronVersion=34.5.8 arch=x64 buildFromSource=false appDir=./
+  • installing native dependencies  arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=34.5.8 appOutDir=release\win-unpacked
+  • downloading     url=https://github.com/electron/electron/releases/download/v34.5.8/electron-v34.5.8-win32-x64.zip size=116 MB parts=8
+  • downloaded      url=https://github.com/electron/electron/releases/download/v34.5.8/electron-v34.5.8-win32-x64.zip duration=1.561s
+  • updating asar integrity executable resource  executablePath=release\win-unpacked\SAT Tutor.exe
+  ⨯ Cannot detect repository by .git/config. Please specify "repository" in the package.json (https://docs.npmjs.com/files/package.json#repository).
+Please see https://electron.build/publish  failedTask=build stackTrace=Error: Cannot detect repository by .git/config. Please specify "repository" in the package.json (https://docs.npmjs.com/files/package.json#repository).
+Please see https://electron.build/publish
+    at getInfo (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\publish\PublishManager.ts:550:13)
+    at getResolvedPublishConfig (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\publish\PublishManager.ts:559:18)
+    at resolvePublishConfigurations (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\publish\PublishManager.ts:442:16)
+    at getPublishConfigs (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\publish\PublishManager.ts:416:10)
+    at getAppUpdatePublishConfiguration (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\publish\PublishManager.ts:248:73)
+    at D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\publish\PublishManager.ts:118:29
+    at Packager.afterPack (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\packager.ts:560:7)
+    at WinPackager.doPack (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\platformPackager.ts:322:5)
+    at WinPackager.pack (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\platformPackager.ts:138:5)
+    at Packager.doBuild (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\packager.ts:459:9)
+    at executeFinally (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\builder-util@25.1.7\node_modules\builder-util\src\promise.ts:12:14)
+    at Packager.build (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\packager.ts:393:31)
+    at executeFinally (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\builder-util@25.1.7\node_modules\builder-util\src\promise.ts:12:14)
+ ELIFECYCLE  Command failed with exit code 1.
+Error: Process completed with exit code 1.
