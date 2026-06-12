@@ -15,7 +15,7 @@ function getResourcePath(...segments: string[]): string {
   return path.join(process.resourcesPath, ...segments);
 }
 
-const SERVER_PATH = getResourcePath("electron-server.mjs");
+const SERVER_PATH = getResourcePath("electron-server.js");
 const RENDERER_DIR = getResourcePath("renderer");
 const DEFAULT_DB = getResourcePath("data", "sat_database.json");
 

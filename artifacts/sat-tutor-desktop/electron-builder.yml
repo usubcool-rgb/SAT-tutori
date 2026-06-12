@@ -17,10 +17,10 @@ files:
   - package.json
 
 extraResources:
-  - from: dist/electron-server.mjs
-    to: electron-server.mjs
-  - from: dist/electron-server.mjs.map
-    to: electron-server.mjs.map
+  - from: dist/electron-server.js
+    to: electron-server.js
+  - from: dist/electron-server.js.map
+    to: electron-server.js.map
     filter:
       - "**/*"
   - from: dist/renderer
