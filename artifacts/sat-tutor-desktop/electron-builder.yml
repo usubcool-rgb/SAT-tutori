@@ -2,8 +2,6 @@ appId: com.sattutor.desktop
 productName: SAT Tutor
 copyright: Copyright © 2026
 
-publish: never
-
 directories:
   output: release
   buildResources: build-resources

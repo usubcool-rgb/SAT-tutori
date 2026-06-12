@@ -33,7 +33,7 @@ jobs:
         working-directory: artifacts/sat-tutor-desktop
 
       - name: Package installer
-        run: pnpm run package:win
+        run: pnpm exec electron-builder --win --publish never
         working-directory: artifacts/sat-tutor-desktop
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
