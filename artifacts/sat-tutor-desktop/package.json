@@ -1,7 +1,13 @@
 {
   "name": "@workspace/sat-tutor-desktop",
   "version": "1.0.0",
+  "description": "SAT Tutor — mastery-based SAT practice app",
+  "author": "SAT Tutor",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/usubcool-rgb/SAT-tutori.git"
+  },
   "main": "dist/main.js",
   "scripts": {
     "build": "node build.mjs",

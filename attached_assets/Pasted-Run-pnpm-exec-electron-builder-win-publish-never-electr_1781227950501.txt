@@ -1,0 +1,39 @@
+Run pnpm exec electron-builder --win --publish never
+  • electron-builder  version=25.1.8 os=10.0.26100
+  • loaded configuration  file=D:\a\SAT-tutori\SAT-tutori\artifacts\sat-tutor-desktop\electron-builder.yml
+  • description is missed in the package.json  appPackageFile=D:\a\SAT-tutori\SAT-tutori\artifacts\sat-tutor-desktop\package.json
+  • author is missed in the package.json  appPackageFile=D:\a\SAT-tutori\SAT-tutori\artifacts\sat-tutor-desktop\package.json
+  • executing @electron/rebuild  electronVersion=34.5.8 arch=x64 buildFromSource=false appDir=./
+  • installing native dependencies  arch=x64
+  • completed installing native dependencies
+  • packaging       platform=win32 arch=x64 electron=34.5.8 appOutDir=release\win-unpacked
+  • downloading     url=https://github.com/electron/electron/releases/download/v34.5.8/electron-v34.5.8-win32-x64.zip size=116 MB parts=8
+  • downloaded      url=https://github.com/electron/electron/releases/download/v34.5.8/electron-v34.5.8-win32-x64.zip duration=915ms
+  • updating asar integrity executable resource  executablePath=release\win-unpacked\SAT Tutor.exe
+  • Cannot detect repository by .git/config. Please specify "repository" in the package.json (https://docs.npmjs.com/files/package.json#repository).
+Please see https://electron.build/publish
+  • default Electron icon is used  reason=application icon is not set
+  • downloading     url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z size=5.6 MB parts=1
+  • downloaded      url=https://github.com/electron-userland/electron-builder-binaries/releases/download/winCodeSign-2.6.0/winCodeSign-2.6.0.7z duration=366ms
+  • signing with signtool.exe  path=release\win-unpacked\SAT Tutor.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • building        target=nsis file=release\SAT Tutor Setup 1.0.0.exe archs=x64 oneClick=false perMachine=false
+  • downloading     url=https://github.com/electron-userland/electron-builder-binaries/releases/download/nsis-3.0.4.1/nsis-3.0.4.1.7z size=1.3 MB parts=1
+  • downloaded      url=https://github.com/electron-userland/electron-builder-binaries/releases/download/nsis-3.0.4.1/nsis-3.0.4.1.7z duration=433ms
+  • signing with signtool.exe  path=release\win-unpacked\resources\elevate.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • downloading     url=https://github.com/electron-userland/electron-builder-binaries/releases/download/nsis-resources-3.4.1/nsis-resources-3.4.1.7z size=731 kB parts=1
+  • downloaded      url=https://github.com/electron-userland/electron-builder-binaries/releases/download/nsis-resources-3.4.1/nsis-resources-3.4.1.7z duration=344ms
+  • signing with signtool.exe  path=release\__uninstaller-nsis-@workspacesat-tutor-desktop.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • signing with signtool.exe  path=release\SAT Tutor Setup 1.0.0.exe
+  • no signing info identified, signing is skipped  signHook=false cscInfo=null
+  • building block map  blockMapFile=release\SAT Tutor Setup 1.0.0.exe.blockmap
+  • Cannot detect repository by .git/config. Please specify "repository" in the package.json (https://docs.npmjs.com/files/package.json#repository).
+Please see https://electron.build/publish
+  • Cannot detect repository by .git/config. Please specify "repository" in the package.json (https://docs.npmjs.com/files/package.json#repository).
+Please see https://electron.build/publish
+  ⨯ Cannot read properties of null (reading 'provider')  failedTask=build stackTrace=TypeError: Cannot read properties of null (reading 'provider')
+    at createUpdateInfoTasks (D:\a\SAT-tutori\SAT-tutori\node_modules\.pnpm\app-builder-lib@25.1.8_dmg-builder@25.1.8\node_modules\app-builder-lib\src\publish\updateInfoBuilder.ts:133:64)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+Error: Process completed with exit code 1.
